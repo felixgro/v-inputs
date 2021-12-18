@@ -32,7 +32,7 @@ const emitModelUpdate = useInputListener((target) => {
 		:value="modelValue"
 		@input="emitModelUpdate"
 		:aria-describedby="error ? `${id}-error` : undefined"
-		:aria-invalid="!!error"
+		:aria-invalid="error ? 'true' : undefined"
 		v-bind="$attrs"
 	/>
 	<FieldError :id="`${id}-error`" :error="error" />

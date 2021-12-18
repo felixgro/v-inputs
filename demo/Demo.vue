@@ -86,3 +86,33 @@ const setupOptions = ref({
 		</form>
 	</div>
 </template>
+
+<style>
+* {
+	box-sizing: border-box;
+}
+
+body {
+	background: #ececec;
+}
+
+form {
+	position: relative;
+	margin: 10px auto;
+	width: 300px;
+	padding: 20px;
+	background: #fafafa;
+}
+
+form > label:first-of-type {
+	margin-top: 0 !important;
+}
+
+form label {
+	margin-top: 10px;
+}
+
+form > small {
+	color: mediumvioletred;
+}
+</style>
