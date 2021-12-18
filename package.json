@@ -4,6 +4,11 @@
 	"description": "A simple set of fully tested, unstyled vue3 components to build WAI-Aria compliant form input fields.",
 	"license": "MIT",
 	"private": false,
+	"author": {
+		"name": "Felix Grohs",
+		"email": "me@felixgrohs.dev",
+		"url": "https://felixgrohs.dev"
+	},
 	"keywords": [
 		"vue3",
 		"typescript",
