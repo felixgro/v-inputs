@@ -1,9 +1,5 @@
 <script lang="ts" setup>
 import { reactive, ref } from 'vue';
-import BaseSelect from '../src/components/BaseSelect.vue';
-import BaseRadioGroup from '../src/components/BaseRadioGroup.vue';
-import BaseInput from '../src/components/BaseInput.vue';
-import BaseCheckbox from '../src/components/BaseCheckbox.vue';
 
 const isInline = ref<boolean>(false);
 const error = ref('');
