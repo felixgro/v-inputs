@@ -1,0 +1,5 @@
+demo/
+tsconfig.json
+build/
+src/
+tests/
