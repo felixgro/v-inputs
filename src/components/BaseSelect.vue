@@ -1,0 +1,47 @@
+<script lang="ts" setup>
+import FieldError from './FieldError.vue';
+import useInputListener from '@/composables/useInputListener';
+import useLayoutStyle from '../composables/useLayoutStyle';
+import useUID from '../composables/useUID';
+
+const props = defineProps<{
+	label?: string;
+	modelValue?: string | number;
+	options: Record<string | number, string | number>;
+	inline?: boolean;
+	error?: string;
+}>();
+
+const emits = defineEmits<{
+	(evt: 'update:modelValue', value: string): void;
+}>();
+
+const id = useUID();
+const style = useLayoutStyle(props);
+const emitModelUpdate = useInputListener((target) => {
+	emits('update:modelValue', target.value);
+});
+</script>
+
+<template>
+	<label v-if="label" :for="id" :style="style">{{ label }}</label>
+	<select
+		:value="modelValue"
+		:style="style"
+		:id="id"
+		@change="emitModelUpdate"
+		:aria-describedby="error ? `${id}-error` : undefined"
+		:aria-invalid="!!error"
+		v-bind="$attrs"
+	>
+		<option
+			v-for="[key, value] in Object.entries(options)"
+			:value="key"
+			:key="key"
+			:selected="value === modelValue"
+		>
+			{{ value }}
+		</option>
+	</select>
+	<FieldError :id="`${id}-error`" :error="error" />
+</template>
