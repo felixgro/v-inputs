@@ -1,8 +1,6 @@
 <script lang="ts" setup>
 import FieldError from './FieldError.vue';
-import useInputListener from '@/composables/useInputListener';
-import useLayoutStyle from '../composables/useLayoutStyle';
-import useUID from '../composables/useUID';
+import useBaseField from '@/composables/useBaseField';
 
 const props = defineProps<{
 	label?: string;
@@ -16,23 +14,20 @@ const emits = defineEmits<{
 	(evt: 'update:modelValue', value: string): void;
 }>();
 
-const id = useUID();
-const style = useLayoutStyle(props);
-const emitModelUpdate = useInputListener((target) => {
+const select = useBaseField(props, (e: Event) => {
+	const target = e.target as HTMLSelectElement;
 	emits('update:modelValue', target.value);
 });
 </script>
 
 <template>
-	<label v-if="label" :for="id" :style="style">{{ label }}</label>
+	<label v-if="label" :for="select.id">{{ label }}</label>
 	<select
 		:value="modelValue"
-		:style="style"
-		:id="id"
-		@change="emitModelUpdate"
-		:aria-describedby="error ? `${id}-error` : undefined"
-		:aria-invalid="!!error"
-		v-bind="$attrs"
+		:style="select.style"
+		:id="select.id"
+		@change="select.updateHandler"
+		v-bind="{ ...select.ariaAttrs, ...$attrs }"
 	>
 		<option
 			v-for="[key, value] in Object.entries(options)"
@@ -43,5 +38,5 @@ const emitModelUpdate = useInputListener((target) => {
 			{{ value }}
 		</option>
 	</select>
-	<FieldError :id="`${id}-error`" :error="error" />
+	<FieldError :error="error" :id="select.errorId" />
 </template>

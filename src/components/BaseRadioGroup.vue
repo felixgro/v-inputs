@@ -1,8 +1,7 @@
 <script lang="ts" setup>
 import BaseRadio from './BaseRadio.vue';
 import FieldError from './FieldError.vue';
-import useLayoutStyle from '../composables/useLayoutStyle';
-import useUID from '../composables/useUID';
+import useBaseField from '@/composables/useBaseField';
 
 const props = defineProps<{
 	label?: string;
@@ -13,28 +12,35 @@ const props = defineProps<{
 	error?: string;
 }>();
 
-const id = useUID();
-const style = useLayoutStyle(props);
+const emits = defineEmits<{
+	(evt: 'update:modelValue', value: string | number): void;
+}>();
+
+const radioGroup = useBaseField(props, (e: any) => {
+	emits('update:modelValue', e as string | number);
+});
 </script>
 
 <template>
-	<label v-if="label" :id="id" :style="style">
+	<label v-if="label" :id="radioGroup.id">
 		{{ label }}
 	</label>
 
 	<BaseRadio
 		v-for="[key, value] in Object.entries(options)"
 		:key="key"
+		:name="name"
 		:value="key"
 		:label="value"
 		:modelValue="modelValue"
-		:name="name"
 		@update:modelValue="$emit('update:modelValue', $event)"
-		:aria-describedby="error ? `${id}-error` : null"
-		:aria-labeledby="id"
 		:inline="props.inline"
-		v-bind="$attrs"
+		v-bind="{
+			'aria-labeledby': radioGroup.id,
+			...radioGroup.ariaAttrs,
+			...$attrs,
+		}"
 	/>
 
-	<FieldError :id="`${id}-error`" :error="error" />
+	<FieldError :error="error" :id="radioGroup.errorId" />
 </template>

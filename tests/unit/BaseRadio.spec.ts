@@ -1,26 +1,14 @@
 import BaseRadio from '@/components/BaseRadio.vue';
-import { mockConsole } from '../setup/browserMocks';
 import { mount } from '@vue/test-utils';
 
 describe('BaseRadio', () => {
-    test('can render with value property', () => {
-        const console = mockConsole();
+    test('can render with value props', () => {
         const wrapper = mount(BaseRadio, {
             props: { value: '20mb' }
         });
 
-        expect(console.warn).not.toHaveBeenCalled();
-        expect(console.error).not.toHaveBeenCalled();
         expect(wrapper.find('input').isVisible()).toBe(true);
         expect(wrapper.find('input').attributes('value')).toBe('20mb');
-    });
-
-    test('warns when rendered without value', () => {
-        const { warn } = mockConsole();
-        const wrapper = mount(BaseRadio);
-
-        expect(warn).toHaveBeenCalled();
-        expect(wrapper.find('input').isVisible()).toBe(true);
     });
 
     test('works with v-model', () => {
@@ -37,31 +25,23 @@ describe('BaseRadio', () => {
 
     test('can render an accessible label', () => {
         const wrapper = mount(BaseRadio, {
-            props: { label: 'test-label', value: 'test-radio' }
+            props: { label: 'label', value: 1 }
         });
 
-        const inputId = wrapper.find('input').attributes('id');
+        const label = wrapper.find('label');
+        const labelSpan = wrapper.find('span');
+        const radioId = wrapper.find('input[type="radio"]').attributes('id');
 
-        expect(wrapper.find('label').text()).toBe('test-label');
-        expect(wrapper.find('label').attributes('for')).toBe(inputId);
+        expect(labelSpan.isVisible()).toBe(true);
+        expect(labelSpan.text()).toBe('label');
+        expect(label.attributes('for')).toBe(radioId);
     });
 
     test('can bind additional attributes to input', () => {
         const wrapper = mount(BaseRadio, {
-            props: { 'aria-hidden': 'true' }
+            props: { 'aria-hidden': 'true', value: 1 }
         });
 
-        expect(wrapper.find('input').attributes('aria-hidden')).toBe('true');
-    });
-
-    test('can be inline displayed', () => {
-        const wrapper = mount(BaseRadio, {
-            props: {
-                label: 'test-label',
-                inline: true
-            }
-        });
-
-        expect(wrapper.find('label').attributes('style')).toContain('display: inline-block');
+        expect(wrapper.find('input[type="radio"]').attributes('aria-hidden')).toBe('true');
     });
 });

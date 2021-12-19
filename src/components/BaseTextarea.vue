@@ -1,8 +1,6 @@
 <script lang="ts" setup>
 import FieldError from './FieldError.vue';
-import useInputListener from '@/composables/useInputListener';
-import useLayoutStyle from '@/composables/useLayoutStyle';
-import useUID from '@/composables/useUID';
+import useBaseField from '@/composables/useBaseField';
 
 const props = defineProps<{
 	label?: string;
@@ -15,23 +13,23 @@ const emits = defineEmits<{
 	(evt: 'update:modelValue', value: string): void;
 }>();
 
-const id = useUID();
-const style = useLayoutStyle(props);
-const emitModelUpdate = useInputListener((target) => {
+const textarea = useBaseField(props, (e: Event) => {
+	const target = e.target as HTMLTextAreaElement;
 	emits('update:modelValue', target.value);
 });
 </script>
 
 <template>
-	<label v-if="label" :for="id" :style="style">{{ label }}</label>
+	<label v-if="label" :for="textarea.id">{{ label }}</label>
 	<textarea
-		:id="id"
+		:id="textarea.id"
 		:value="modelValue"
-		:style="style"
-		@input="emitModelUpdate"
-		:aria-describedby="error ? `${id}-error` : undefined"
-		:aria-invalid="!!error"
-		v-bind="$attrs"
+		:style="textarea.style"
+		@input="textarea.updateHandler"
+		v-bind="{
+			...textarea.ariaAttrs,
+			...$attrs,
+		}"
 	></textarea>
-	<FieldError :id="`${id}-error`" :error="error" />
+	<FieldError :id="textarea.errorId" :error="error" />
 </template>

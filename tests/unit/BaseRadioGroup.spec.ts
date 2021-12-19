@@ -13,11 +13,11 @@ describe('BaseRadioGroup', () => {
             props: { name: 'test-radio-group', options }
         });
 
-        expect(wrapper.findAll('input').length).toBe(3);
+        const allRadios = wrapper.findAll('input[type="radio"]');
 
-        wrapper.findAll('input').forEach((wrappedInput, idx) => {
+        expect(allRadios.length).toBe(3);
+        allRadios.forEach((wrappedInput, idx) => {
             expect(wrappedInput.attributes('name')).toBe('test-radio-group');
-            expect(wrappedInput.attributes('type')).toBe('radio');
             expect(wrappedInput.attributes('value')).toBe(`${idx + 1}`);
         });
     });
@@ -27,11 +27,9 @@ describe('BaseRadioGroup', () => {
             props: { modelValue: 3, name: 'test', options }
         });
 
-        const inputElement = wrapper.find('input');
-        inputElement?.trigger('click');
+        wrapper.find('input[type="radio"]').trigger('click');
 
         const updateEvents = wrapper.emitted('update:modelValue') as string[][];
-
         expect(updateEvents.length).toBe(1);
         expect(updateEvents![0][0]).toBe('1');
     });
@@ -43,8 +41,27 @@ describe('BaseRadioGroup', () => {
 
         const labelId = wrapper.find('label').attributes('id');
 
-        wrapper.findAll('input').forEach(wrappedInput => {
+        wrapper.findAll('input[type="radio"]').forEach(wrappedInput => {
             expect(wrappedInput.attributes('aria-labeledby')).toBe(labelId);
+        });
+    });
+
+    test('can render an accessible error', () => {
+        const wrapper = mount(BaseRadioGroup, {
+            props: { error: 'error', name: 'test-radio', options }
+        });
+
+        const radios = wrapper.findAll('input[type="radio"]');
+        const error = wrapper.find('[aria-label="Error"]');
+        const errorId = error.attributes('id');
+
+        expect(error.exists()).toBe(true);
+        expect(error.html()).toContain('error');
+        radios.forEach(wrappedRadio => {
+            expect(wrappedRadio.attributes('aria-describedby')).toBe(errorId);
+            expect(wrappedRadio.attributes('aria-invalid')).toBe('true');
+            expect(wrappedRadio.attributes('aria-describedby')).toBe(errorId);
+            expect(wrappedRadio.attributes('aria-errormessage')).toBe(errorId);
         });
     });
 
@@ -53,16 +70,8 @@ describe('BaseRadioGroup', () => {
             props: { name: 'test', 'aria-hidden': 'true', options }
         });
 
-        wrapper.findAll('input').forEach(wrappedInput => {
-            expect(wrappedInput.attributes('aria-hidden')).toBe('true');
+        wrapper.findAll('input[type="radio"]').forEach(wrappedRadio => {
+            expect(wrappedRadio.attributes('aria-hidden')).toBe('true');
         });
-    });
-
-    test('can be inline displayed', () => {
-        const wrapper = mount(BaseRadioGroup, {
-            props: { name: 'test', inline: true, options }
-        });
-
-        expect(wrapper.find('label').attributes('style')).toContain('display: inline-block');
     });
 });

@@ -5,6 +5,8 @@ describe('BaseTextArea', () => {
     test('can render without props', () => {
         const wrapper = mount(BaseTextarea);
         expect(wrapper.find('textarea').isVisible()).toBe(true);
+        expect(wrapper.find('label').exists()).toBe(false);
+        expect(wrapper.find('[aria-label="Error"]').attributes('aria-hidden')).toBe('true');
     });
 
     test('works with v-model', () => {
@@ -24,24 +26,28 @@ describe('BaseTextArea', () => {
             props: { label: 'test-label' }
         });
 
-        const inputId = wrapper.find('textarea').attributes('id');
+        const label = wrapper.find('label');
+        const textareaId = wrapper.find('textarea').attributes('id');
 
-        expect(wrapper.find('label').text()).toBe('test-label');
-        expect(wrapper.find('label').attributes('for')).toBe(inputId);
+        expect(label.isVisible()).toBe(true);
+        expect(label.text()).toBe('test-label');
+        expect(label.attributes('for')).toBe(textareaId);
     });
 
     test('can render an accessible error', () => {
         const wrapper = mount(BaseTextarea, {
-            props: { error: 'oops' }
+            props: { error: 'error message' }
         });
 
-        const errorElement = wrapper.find('small');
-        const textareaElement = wrapper.find('textarea');
+        const textarea = wrapper.find('textarea');
+        const error = wrapper.find('[aria-label="Error"]');
+        const errorId = error.attributes('id');
 
-        expect(errorElement.exists()).toBe(true);
-        expect(errorElement.text()).toBe('oops');
-        expect(textareaElement.attributes('aria-invalid')).toBe('true');
-        expect(textareaElement.attributes('aria-describedby')).toBe(errorElement.attributes('id'));
+        expect(error.exists()).toBe(true);
+        expect(error.text()).toBe('error message');
+        expect(textarea.attributes('aria-invalid')).toBe('true');
+        expect(textarea.attributes('aria-describedby')).toBe(errorId);
+        expect(textarea.attributes('aria-errormessage')).toBe(errorId);
     });
 
     test('can bind additional attributes to input', () => {
@@ -50,17 +56,5 @@ describe('BaseTextArea', () => {
         });
 
         expect(wrapper.find('textarea').attributes('aria-hidden')).toBe('true');
-    });
-
-    test('can be inline displayed', () => {
-        const wrapper = mount(BaseTextarea, {
-            props: {
-                label: 'test-label',
-                inline: true
-            }
-        });
-
-        expect(wrapper.find('label').attributes('style')).toContain('display: inline-block');
-        expect(wrapper.find('textarea').attributes('style')).toContain('display: inline-block');
     });
 });

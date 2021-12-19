@@ -1,12 +1,12 @@
 import BaseInput from '@/components/BaseInput.vue';
 import { mount } from '@vue/test-utils';
 
-describe('BaseCheckbox', () => {
+describe('BaseInput', () => {
     test('can render without props', () => {
         const wrapper = mount(BaseInput);
         expect(wrapper.find('input').isVisible()).toBe(true);
         expect(wrapper.find('label').exists()).toBe(false);
-        expect(wrapper.find('small').exists()).toBe(false);
+        expect(wrapper.find('[aria-label="Error"]').attributes('aria-hidden')).toBe('true');
     });
 
     test('works with v-model', () => {
@@ -26,24 +26,28 @@ describe('BaseCheckbox', () => {
             props: { label: 'test-label' }
         });
 
+        const label = wrapper.find('label');
         const inputId = wrapper.find('input').attributes('id');
 
-        expect(wrapper.find('label').text()).toBe('test-label');
-        expect(wrapper.find('label').attributes('for')).toBe(inputId);
+        expect(label.isVisible()).toBe(true);
+        expect(label.text()).toBe('test-label');
+        expect(label.attributes('for')).toBe(inputId);
     });
 
     test('can render an accessible error', () => {
         const wrapper = mount(BaseInput, {
-            props: { error: 'oops' }
+            props: { error: 'error message' }
         });
 
-        const errorElement = wrapper.find('small');
-        const inputElement = wrapper.find('input');
+        const input = wrapper.find('input');
+        const error = wrapper.find('[aria-label="Error"]');
+        const errorId = error.attributes('id');
 
-        expect(errorElement.exists()).toBe(true);
-        expect(errorElement.text()).toBe('oops');
-        expect(inputElement.attributes('aria-invalid')).toBe('true');
-        expect(inputElement.attributes('aria-describedby')).toBe(errorElement.attributes('id'));
+        expect(error.exists()).toBe(true);
+        expect(error.text()).toBe('error message');
+        expect(input.attributes('aria-invalid')).toBe('true');
+        expect(input.attributes('aria-describedby')).toBe(errorId);
+        expect(input.attributes('aria-errormessage')).toBe(errorId);
     });
 
     test('can bind additional attributes to input', () => {
@@ -52,17 +56,5 @@ describe('BaseCheckbox', () => {
         });
 
         expect(wrapper.find('input').attributes('aria-hidden')).toBe('true');
-    });
-
-    test('can be inline displayed', () => {
-        const wrapper = mount(BaseInput, {
-            props: {
-                label: 'test-label',
-                inline: true
-            }
-        });
-
-        expect(wrapper.find('label').attributes('style')).toContain('display: inline-block');
-        expect(wrapper.find('input').attributes('style')).toContain('display: inline-block');
     });
 });

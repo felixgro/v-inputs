@@ -47,6 +47,7 @@ const setupOptions = ref({
 				v-model="data.title"
 				:inline="isInline"
 				:error="error"
+				data-test="test"
 			/>
 			<BaseTextarea
 				label="Description"

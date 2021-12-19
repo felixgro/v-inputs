@@ -1,6 +1,6 @@
 {
 	"name": "v-inputs",
-	"version": "0.0.1",
+	"version": "0.0.2",
 	"description": "A simple set of fully tested, unstyled vue3 components to build WAI-Aria compliant form input fields.",
 	"license": "MIT",
 	"private": false,

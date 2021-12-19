@@ -4,7 +4,7 @@ import { shallowMount } from '@vue/test-utils';
 describe('FieldError', () => {
 	test('is hidden by default', () => {
 		const wrapper = shallowMount(FieldError);
-		expect(wrapper.html()).toBe("<!--v-if-->");
+		expect(wrapper.attributes('aria-hidden')).toBe("true");
 	});
 
 	test('is hidden with empty error message', () => {
@@ -14,7 +14,7 @@ describe('FieldError', () => {
 			}
 		});
 
-		expect(wrapper.html()).toBe("<!--v-if-->");
+		expect(wrapper.attributes('aria-hidden')).toBe("true");
 	});
 
 	test('is visible when error is present', () => {
@@ -24,7 +24,7 @@ describe('FieldError', () => {
 			}
 		});
 
-		expect(wrapper.find('small').text()).toBe('error message');
+		expect(wrapper.html()).toContain('error message');
 	});
 
 	test('has ARIA live region', () => {
@@ -35,6 +35,6 @@ describe('FieldError', () => {
 			}
 		});
 
-		expect(wrapper.find('small').attributes('aria-live')).toBe('assertive');
+		expect(wrapper.attributes('aria-live')).toBe('assertive');
 	});
 });

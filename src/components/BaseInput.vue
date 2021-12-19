@@ -1,8 +1,6 @@
 <script lang="ts" setup>
 import FieldError from './FieldError.vue';
-import useInputListener from '@/composables/useInputListener';
-import useLayoutStyle from '../composables/useLayoutStyle';
-import useUID from '../composables/useUID';
+import useBaseField from '@/composables/useBaseField';
 
 const props = defineProps<{
 	label?: string;
@@ -15,25 +13,22 @@ const emits = defineEmits<{
 	(evt: 'update:modelValue', value: string | number): void;
 }>();
 
-const id = useUID();
-const style = useLayoutStyle(props);
-const emitModelUpdate = useInputListener((target) => {
+const input = useBaseField(props, (e: Event) => {
+	const target = e.target as HTMLInputElement;
 	emits('update:modelValue', target.value);
 });
 </script>
 
 <template>
-	<label v-if="label" :for="id" :style="style">
+	<label v-if="label" :for="input.id">
 		{{ label }}
 	</label>
 	<input
-		:id="id"
-		:style="style"
+		:id="input.id"
 		:value="modelValue"
-		@input="emitModelUpdate"
-		:aria-describedby="error ? `${id}-error` : undefined"
-		:aria-invalid="error ? 'true' : undefined"
-		v-bind="$attrs"
+		:style="input.style"
+		@input="input.updateHandler"
+		v-bind="{ ...input.ariaAttrs, ...$attrs }"
 	/>
-	<FieldError :id="`${id}-error`" :error="error" />
+	<FieldError :label="label" :error="error" :id="input.errorId" />
 </template>

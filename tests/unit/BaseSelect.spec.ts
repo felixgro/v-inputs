@@ -49,10 +49,15 @@ describe('BaseSelect', () => {
             props: { error: 'error', options }
         });
 
-        const errorId = wrapper.find('small').attributes('id');
+        const select = wrapper.find('select');
+        const error = wrapper.find('[aria-label="Error"]');
+        const errorId = error.attributes('id');
 
-        expect(wrapper.find('select').attributes('aria-describedby')).toBe(errorId);
-        expect(wrapper.find('small').text()).toBe('error');
+        expect(error.exists()).toBe(true);
+        expect(error.text()).toBe('error');
+        expect(select.attributes('aria-invalid')).toBe('true');
+        expect(select.attributes('aria-describedby')).toBe(errorId);
+        expect(select.attributes('aria-errormessage')).toBe(errorId);
     });
 
     test('can bind additional attributes to inputs', () => {
@@ -61,14 +66,5 @@ describe('BaseSelect', () => {
         });
 
         expect(wrapper.find('select').attributes('aria-hidden')).toBe('true');
-    });
-
-    test('can be inline displayed', () => {
-        const wrapper = mount(BaseSelect, {
-            props: { label: 'label', inline: true, options }
-        });
-
-        expect(wrapper.find('label').attributes('style')).toContain('display: inline-block');
-        expect(wrapper.find('select').attributes('style')).toContain('display: inline-block');
     });
 });
